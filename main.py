@@ -33,7 +33,8 @@ class Game:
     # init all variables, set groupas and instantiate classes
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        self.coins = pg.sprite.Group
+        self.coins = pg.sprite.Group()
+        self.enemy = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -47,6 +48,8 @@ class Game:
                     self.player = Player(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
+                if tile == 'E':
+                    enemy(self, col, row)
 
     # Run Method
     def run(self):
@@ -89,6 +92,7 @@ class Game:
             #         self.player.move(dy=-1)
             #     if event.key == pg.K_DOWN:
             #         self.player.move(dy=1)
+
 
 def show_start_screen(self):
         pass
