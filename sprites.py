@@ -59,6 +59,11 @@ class Player(Sprite):
                     self.vy = 0
                 self.rect.y = self.y
 
+    def collide_with_obj(self, group, kill, desc):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits and desc == "coin":
+            self.image.fill(BLUE)
+
     def update(self):
         # self.rect.x = self.x * TILESIZE
         # self.rect.y = self.y * TILESIZE
@@ -69,6 +74,7 @@ class Player(Sprite):
         self.collide_with_walls('x') 
         self.rect.y = self.y
         self.collide_with_walls('y')
+        self.collide_with_obj(self.game.coins, True, "coin")
     
 
 # create a wall class
@@ -87,7 +93,7 @@ class Wall(Sprite):
 
 class Coin(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.coins
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -117,3 +123,48 @@ def update(self):
         self.rect.width = self.rect.width
         self.rect.height = self.rect.height
 
+class enemy(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.enemy
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(PURPLE)
+        self.rect = self.image.get_rect() 
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx = ENEMY_SPEED
+        self.vy = ENEMY_SPEED
+        self.vx *= 0.7071
+        self.vy *= 0.7071 
+        
+    def update(self):
+        # self.rect.x = self.x * TILESIZE
+        # self.rect.y = self.y * TILESIZE
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x') 
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+    def collide_with_walls(self, dir):
+            if dir == 'x':
+                hits = pg.sprite.spritecollide(self, self.game.enemy, False)
+                if hits: 
+                    if self.vx > 0:
+                        self.x = hits[0].rect.left - self.rect.width
+                    if self.vx < 0:
+                        self.x = hits[0].rect.right
+                    self.vx = 0
+                self.rect.x = self.x
+            if dir == 'y':
+                hits = pg.sprite.spritecollide(self, self.game.enemy, False)
+                if hits: 
+                    if self.vy > 0:
+                        self.y = hits[0].rect.top - self.rect.width
+                    if self.vy < 0:
+                        self.y = hits[0].rect.bottom
+                    self.vy = 0
+                self.rect.y = self.y
