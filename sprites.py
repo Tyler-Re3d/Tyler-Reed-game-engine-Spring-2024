@@ -20,6 +20,10 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0     
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+        self.moneybag = 0
+        self.speed = 300
+        self.status = ""
+        self.hitpoints = 100
 
     # def move(self, dx= 0, dy = 0):
     #     self.x += dx
@@ -108,6 +112,12 @@ def collide_with_obj(self, group, kill, desc):
     if hits and desc == "coin":
         self.image.fill(YELLOW)
 
+def collide_with_group(self, group, kill):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Coin":
+                self.moneybag += 1
+
 def update(self):
         # self.rect.x = self.x * TILESIZE
         # self.rect.y = self.y * TILESIZE
@@ -124,6 +134,7 @@ def update(self):
         self.rect.height = self.rect.height
 
 class enemy(Sprite):
+    # enemy size/summon
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.enemy
         Sprite.__init__(self, self.groups)
@@ -150,6 +161,7 @@ class enemy(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
     def collide_with_walls(self, dir):
+            #wall collsion w/ enemy
             if dir == 'x':
                 hits = pg.sprite.spritecollide(self, self.game.enemy, False)
                 if hits: 
@@ -161,6 +173,56 @@ class enemy(Sprite):
                 self.rect.x = self.x
             if dir == 'y':
                 hits = pg.sprite.spritecollide(self, self.game.enemy, False)
+                if hits: 
+                    if self.vy > 0:
+                        self.y = hits[0].rect.top - self.rect.width
+                    if self.vy < 0:
+                        self.y = hits[0].rect.bottom
+                    self.vy = 0
+                self.rect.y = self.y
+
+
+class boss(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.boss
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(PURPLE)
+        self.rect = self.image.get_rect() 
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx = BOSS_SPEED
+        self.vy = BOSS_SPEED
+        self.vx *= 0.7071
+        self.vy *= 0.7071 
+
+
+
+    def update(self):
+        # self.rect.x = self.x * TILESIZE
+        # self.rect.y = self.y * TILESIZE
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x') 
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+    def collide_with_walls(self, dir):
+            #wall collsion w/ enemy
+            if dir == 'x':
+                hits = pg.sprite.spritecollide(self, self.game.boss, False)
+                if hits: 
+                    if self.vx > 0:
+                        self.x = hits[0].rect.left - self.rect.width
+                    if self.vx < 0:
+                        self.x = hits[0].rect.right
+                    self.vx = 0
+                self.rect.x = self.x
+            if dir == 'y':
+                hits = pg.sprite.spritecollide(self, self.game.boss, False)
                 if hits: 
                     if self.vy > 0:
                         self.y = hits[0].rect.top - self.rect.width
