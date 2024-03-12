@@ -49,6 +49,8 @@ class Game:
         # Load save game Data
     def load_data(self):
         game_folder = path.dirname(__file__)
+        img_folder = path.join(game_folder, 'images')
+        self.player_img = pg.image.load(path.join(img_folder, 'download-compresskaru.com.png')).convert_alpha()
         self.map_data = []
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
@@ -59,33 +61,15 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.coins = pg.sprite.Group()
-        self.mobs = pg.sprite.Group()
-        self.power_ups = pg.sprite.Group()
-        # self.player1 = Player(self, 1, 1)
-        # for x in range(10, 20):
-        #     Wall(self, x, 5)
-        for row, tiles in enumerate(self.map_data):
-            for col, tile in enumerate(tiles):
-                    print(col)
-                    if tile == '1':
-                        print("a wall at", row, col)
-                        Wall(self, col, row)
-                    if tile == 'P':
-                        self.player = Player(self, col, row)
-                    if tile == 'C':
-                        Coin(self, col, row)
-    # init all variables, set groupas and instantiate classes
-        self.all_sprites = pg.sprite.Group()
-        self.walls = pg.sprite.Group()
-        self.coins = pg.sprite.Group()
         self.enemy = pg.sprite.Group()
+        self.boss = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data):
-                print(row)
-        for col, tile in enumerate(tiles):
-                print(col)
+            # print(row)
+            for col, tile in enumerate(tiles):
+                # print(col)
                 if tile == '1':
                     print("a wall at", row, col)
                     Wall(self, col, row)
@@ -95,9 +79,10 @@ class Game:
                     Coin(self, col, row)
                 if tile == 'E':
                     enemy(self, col, row)
-
+                if tile == 'B':
+                    boss(self, col, row)
     # Run Method
-def run(self):
+    def run(self):
         self.playing = True
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
@@ -105,21 +90,21 @@ def run(self):
             self.update()
             self.draw()
     # Quit Method (X in corner)
-def quit(self):
+    def quit(self):
         pg.quit()
         sys.exit()
 # Updates charactar after it moves
-def update(self):
+    def update(self):
         self.test_timer.ticking()
         self.all_sprites.update()
 # the Backround Grid
-def draw_grid(self):
+    def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
     # The sprites
-def draw_text(self, surface, text, size, color, x, y):
+    def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
@@ -127,14 +112,15 @@ def draw_text(self, surface, text, size, color, x, y):
         text_rect.topleft = (x,y)
         surface.blit(text_surface, text_rect)
     
-def draw(self):
+    def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(45)), 24, YELLOW, WIDTH/2 - 32, 2)
         pg.display.flip()
+
 # Key Inputs ( how you move )
-def events(self):
+    def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
@@ -147,16 +133,19 @@ def events(self):
             #         self.player.move(dy=-1)
             #     if event.key == pg.K_DOWN:
             #         self.player.move(dy=1)
-def load_data(self):
-        game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'download-compresskaru.com.png.png')).convert_alpha()
-        self.map_data = []
+    # def load_data(self):
+    #     game_folder = path.dirname(__file__)
+    #     img_folder = path.join(game_folder, 'images')
+    #     self.player_img = pg.image.load(path.join(img_folder, 'download-compresskaru.com.png')).convert_alpha()
+    #     self.map_data = []
+    #     with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+    #         for line in f:
+    #             self.map_data.append(line)
 
-def show_start_screen(self):
+    def show_start_screen(self):
         pass
 
-def show_go_screen(self):
+    def show_go_screen(self):
         pass
 
 g = Game()

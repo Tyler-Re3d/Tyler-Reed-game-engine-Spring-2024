@@ -117,6 +117,10 @@ def collide_with_group(self, group, kill):
         if hits:
             if str(hits[0].__class__.__name__) == "Coin":
                 self.moneybag += 1
+# def spawn_boss():
+
+#     if self.moneybag >= 1:
+#         boss = 2
 
 def update(self):
         # self.rect.x = self.x * TILESIZE
@@ -188,7 +192,7 @@ class boss(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(PURPLE)
+        self.image.fill(RED)
         self.rect = self.image.get_rect() 
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
@@ -198,7 +202,6 @@ class boss(Sprite):
         self.vy = BOSS_SPEED
         self.vx *= 0.7071
         self.vy *= 0.7071 
-
 
 
     def update(self):
@@ -230,3 +233,4 @@ class boss(Sprite):
                         self.y = hits[0].rect.bottom
                     self.vy = 0
                 self.rect.y = self.y
+
