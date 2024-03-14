@@ -4,6 +4,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
+import time
 
 # create a player class
 # Our player charcter
@@ -154,6 +155,7 @@ class enemy(Sprite):
         self.vy = ENEMY_SPEED
         self.vx *= 0.7071
         self.vy *= 0.7071 
+        self.hitpoints = 10
         
     def update(self):
         # self.rect.x = self.x * TILESIZE
@@ -191,7 +193,7 @@ class boss(Sprite):
         self.groups = game.all_sprites, game.boss
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = pg.Surface((64, 64))
         self.image.fill(RED)
         self.rect = self.image.get_rect() 
         self.rect.x = x * TILESIZE
@@ -213,6 +215,12 @@ class boss(Sprite):
         self.collide_with_walls('x') 
         self.rect.y = self.y
         self.collide_with_walls('y')
+        self.spawn_boss
+
+#spawning BOSS enemy
+    def spawn_boss():
+        pg.time.set_timer(pg.spawn.boss, 1000)
+
     def collide_with_walls(self, dir):
             #wall collsion w/ enemy
             if dir == 'x':
@@ -234,3 +242,4 @@ class boss(Sprite):
                     self.vy = 0
                 self.rect.y = self.y
 
+            

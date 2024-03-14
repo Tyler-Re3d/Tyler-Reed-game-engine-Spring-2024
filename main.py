@@ -9,6 +9,7 @@ from random import randint
 from os import path
 from time import sleep
 from math import floor
+import images
 
 # Goal: Win
 # 3 things want to add: weapons, boss/different enemies, and hp bar more collectables
@@ -36,6 +37,7 @@ class Cooldown():
     # sets current time
     def timer(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
+     
 
 class Game:
     # Initiates all code in a class
@@ -81,6 +83,9 @@ class Game:
                     enemy(self, col, row)
                 if tile == 'B':
                     boss(self, col, row)
+
+   
+        boss_spawned = True
     # Run Method
     def run(self):
         self.playing = True
