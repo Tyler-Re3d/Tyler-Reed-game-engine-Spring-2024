@@ -38,6 +38,7 @@ class Cooldown():
     def timer(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
      
+    
 
 class Game:
     # Initiates all code in a class
@@ -114,12 +115,24 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.topleft = (x,y)
         surface.blit(text_surface, text_rect)
-    
+# Cozort Code
+    def draw_health_bar(surf, x, y, pct):
+        if pct < 0:
+            pct = 0
+        BAR_LENGTH = 32
+        BAR_HEIGHT = 10
+        fill = (pct / 100) * BAR_LENGTH
+        outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+        fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+        pg.draw.rect(surf, GREEN, fill_rect)
+        pg.draw.rect(surf, BLACK, outline_rect, 2)
+        
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
+        draw_health_bar(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
         # self.draw_text(self.screen, str( 30, 60, BLACK, WIDTH/7 - 10, 4)
         pg.display.flip()
 
