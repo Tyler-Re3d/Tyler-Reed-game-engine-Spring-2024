@@ -83,9 +83,7 @@ class Game:
                     enemy(self, col, row)
                 if tile == 'B':
                     boss(self, col, row)
-
-   
-        boss_spawned = True
+           
     # Run Method
     def run(self):
         self.playing = True
@@ -121,7 +119,8 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, str(self.test_timer.countdown(45)), 24, YELLOW, WIDTH/2 - 32, 2)
+        self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
+        # self.draw_text(self.screen, str( 30, 60, BLACK, WIDTH/7 - 10, 4)
         pg.display.flip()
 
 # Key Inputs ( how you move )
