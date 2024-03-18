@@ -132,7 +132,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
-        draw_health_bar(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
+        self.draw_text(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
         # self.draw_text(self.screen, str( 30, 60, BLACK, WIDTH/7 - 10, 4)
         pg.display.flip()
 

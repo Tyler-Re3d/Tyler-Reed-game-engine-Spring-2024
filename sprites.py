@@ -265,6 +265,25 @@ class boss(Sprite):
         self.vy = BOSS_SPEED
         self.vx *= 0.7071
         self.vy *= 0.7071 
+        self.boss_spawned = False
+
+
+    def update(self):
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        self.test_timer.ticking()
+        if not self.boss_spawned and self.test_timer.delta >= 90:
+            boss(self, 26, 31)
+            self.boss_spawned = True
+        self.all_sprites.update()
+
+
+        boss_spawned = True
+
         
     def collide_with_walls(self, dir):
             #wall collsion w/ enemy
