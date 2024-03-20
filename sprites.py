@@ -318,7 +318,7 @@ class boss(Sprite):
         
 # AI Code
     def update(self):
-        # Calculates direction vector to player and makes it follow player
+        # Calculates direction vector to player and makes it follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
         # Normalizes the direction vector and scales the boss by speed
         if direction.length() > 0:
