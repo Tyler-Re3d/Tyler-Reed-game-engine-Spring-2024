@@ -177,6 +177,7 @@ class Sword(Sprite):
         self.timer = 0
 # AI Code 
     def update(self):
+        # makes its time relative to delta time
         self.timer += self.game.dt
         if self.timer >= self.duration:
             self.kill()  # Removes the sword after the time duration
