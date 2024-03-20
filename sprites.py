@@ -12,6 +12,7 @@ vec = pg.math.Vector2
 # create a player class
 # Our player charcter
 # Cozort Code
+# Cooldown class (set up time)
 class Cooldown():
     # sets all properties to zero when instantiated...
     def __init__(self):
@@ -20,6 +21,7 @@ class Cooldown():
         self.delta = 0
         # ticking ensures the timer is counting...
     # must use ticking to count up or down
+        # the time and how it works
     def ticking(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
         self.delta = self.current_time - self.event_time
@@ -28,12 +30,13 @@ class Cooldown():
         x = x - self.delta
         if x != None:
             return x
+        # resets time
     def event_reset(self):
         self.event_time = floor((pg.time.get_ticks())/1000)
     # sets current time
     def timer(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
-
+# me / player character
 class Player(Sprite): 
     def __init__(self, game, x, y):
         self.hit_cooldown = Cooldown()
@@ -52,7 +55,7 @@ class Player(Sprite):
         # Cozort Code
         self.sword = None
         
-    
+    # weapon getting
     def get_mouse(self):
         if pg.mouse.get_rel()[0]:
             self.weapon_drawn = False
@@ -64,7 +67,7 @@ class Player(Sprite):
     # def move(self, dx= 0, dy = 0):
     #     self.x += dx
     #     self.y += dy
-
+# the keys you use
     def get_keys(self): 
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
@@ -79,6 +82,7 @@ class Player(Sprite):
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071
             self.vy *= 0.7071 
+            # slide collision
     def collide_with_walls(self, dir):
             if dir == 'x':
                 hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -98,7 +102,7 @@ class Player(Sprite):
                         self.y = hits[0].rect.bottom
                     self.vy = 0
                 self.rect.y = self.y
-
+# kills coins
     def collide_with_obj(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "coin":
@@ -119,17 +123,17 @@ class Player(Sprite):
         hits_enemies = pg.sprite.spritecollide(self, self.game.enemies, False)
         for enemy in hits_enemies:
             if self.hit_cooldown.countdown(1):
-                self.hitpoints -= 1  # Reduce player's hitpoints by 1
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 when hit by enemy
                 self.hit_cooldown.event_reset()
 # AI Code
         # Check for collisions with boss
         hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
         for boss in hits_boss:
             if self.hit_cooldown.countdown(1):
-                self.hitpoints -= 1  # Reduce player's hitpoints by 1
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
                 self.hit_cooldown.event_reset()
 # AI Code
-            # Checks for sword collisions with enemies and boss
+            # Checks for sword collisions with enemies and da boss
         if self.sword:
             hits_enemies = pg.sprite.spritecollide(self.sword, self.game.enemy, True)
             hits_boss = pg.sprite.spritecollide(self.sword, self.game.boss, True)
@@ -149,7 +153,7 @@ class Player(Sprite):
         # Updates the sword if it is on screen
         if self.sword:
             self.sword.update()
-            # If the sword is no longer on screen, set it to None
+            # If the sword is no longer on screen it goes bye bye
             if not self.sword.alive():
                 self.sword = None
         
@@ -165,17 +169,17 @@ class Sword(Sprite):
         self.image.fill(RED)
         self.rect = self.image.get_rect()
          # AI Code 
-         # Calculates the position of the sword based from the player's center
+         # Calculates the position of the sword based from the player's center so it can spawn
         offset = pg.math.Vector2(30, 0)  
         self.rect.center = player.rect.center + offset
 
-        self.duration = 0.5  # Duration the sword stays active
+        self.duration = 0.5  # Duration the sword stays active on da screen
         self.timer = 0
 # AI Code 
     def update(self):
         self.timer += self.game.dt
         if self.timer >= self.duration:
-            self.kill()  # Removes the sword after the duration
+            self.kill()  # Removes the sword after the time duration
         # Updates sword position with the player
         offset = pg.math.Vector2(30, 0)  
         self.rect.center = self.player.rect.center + offset
@@ -184,9 +188,9 @@ class Sword(Sprite):
         # Checks for collisions with da enemies and with da bosses
         hits = pg.sprite.spritecollide(self, self.game.enemies, self.game.boss, False)
         for enemy in hits:
-            enemy.hitpoints -= 1  # Reduce enemy/boss hitpoints by 1
+            enemy.hitpoints -= 1  # Reduce enemy/boss hitpoints by 1 when hit by sword
         for boss in hits:
-            boss.hitpoints -= 1
+            boss.hitpoints -= 1   # reduces boss hitpoints when hit by sword by 1
        
 
 
@@ -204,7 +208,7 @@ class Wall(Sprite):
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
-
+# money
 class Coin(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.coins
@@ -218,7 +222,7 @@ class Coin(Sprite):
         self.rect.y = y * TILESIZE
 
     
-
+# when collides
 def collide_with_obj(self, group, kill, desc):
     hits = pg.sprite.spritecollide(self, group, kill)
     if hits and desc == "coin":
@@ -272,7 +276,7 @@ class enemy(Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-
+# dies when hitpoints run out
         if self.hitpoints <= 0:
             self.kill()
 
@@ -296,7 +300,7 @@ class enemy(Sprite):
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  # Reverse direction
 
-
+# the big boi (bigger enemy) and faster
 class boss(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.boss
@@ -315,18 +319,18 @@ class boss(Sprite):
     def update(self):
         # Calculates direction vector to player and makes it follow player
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalizes the direction vector and scales by speed
+        # Normalizes the direction vector and scales the boss by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
 
-
+# multiplies velocity by delta time
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-        
+        # dies when hitpoints are gone
         if self.hitpoints <= 0:
             self.kill()
 

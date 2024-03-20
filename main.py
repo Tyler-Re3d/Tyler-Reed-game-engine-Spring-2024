@@ -50,7 +50,7 @@ class Game:
         fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
         pg.draw.rect(surface, GREEN, fill_rect)
         pg.draw.rect(surface, WHITE, outline_rect, 2)
-    
+    # the sprites / classes
     def new(self):
         self.test_timer = Cooldown()
         print("create new game...")
@@ -64,10 +64,12 @@ class Game:
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
+        #Imports da map data
         for row, tiles in enumerate(self.map_data):
             # print(row)
             for col, tile in enumerate(tiles):
                 # print(col)
+                # where classes spawn
                 if tile == '1':
                     print("a wall at", row, col)
                     Wall(self, col, row)
@@ -108,7 +110,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
-    # The sprites
+    # Draws the texts in this style
     def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
@@ -116,9 +118,8 @@ class Game:
         text_rect = text_surface.get_rect()
         text_rect.topleft = (x,y)
         surface.blit(text_surface, text_rect)
-# Cozort Code
     
-        
+        # draws backround and da timer and where they are
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
@@ -151,15 +152,16 @@ class Game:
     #     with open(path.join(game_folder, 'map.txt'), 'rt') as f:
     #         for line in f:
     #             self.map_data.append(line)
-
+# Start
     def show_start_screen(self):
         pass
-
+# Go
     def show_go_screen(self):
         pass
-
+# identifies g
 g = Game()
 # g.show_start_screen()
+#new game and run game
 while True:
     g.new()
     g.run()
