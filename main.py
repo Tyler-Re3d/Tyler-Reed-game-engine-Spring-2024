@@ -126,7 +126,7 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
  # AI Code
-        # Draws health bar on da screen/ location where draws
+        # Draws health bar on da screen/ location where draws relative to de player's health
         self.draw_healthbar(self.screen, 10, 10, 100, 10, self.player.hitpoints)
         pg.display.flip()
 
