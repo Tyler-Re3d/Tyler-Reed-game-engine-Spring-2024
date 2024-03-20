@@ -6,6 +6,7 @@ import sys
 from settings import *
 from sprites import *
 from random import randint
+import random
 from os import path
 from time import sleep
 from math import floor
@@ -46,7 +47,9 @@ class Game:
         self.walls = pg.sprite.Group()
         self.coins = pg.sprite.Group()
         self.enemy = pg.sprite.Group()
+        self.enemies = pg.sprite.Group()
         self.boss = pg.sprite.Group()
+        self.sword = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -61,7 +64,7 @@ class Game:
                     self.player = Player(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
-                if tile == 'E':
+                if tile == 'E': 
                     enemy(self, col, row)
                 if tile == 'B':
                     boss(self, col, row)
@@ -73,6 +76,10 @@ class Game:
             self.events()
             self.update()
             self.draw()
+            self.player.update()
+            self.enemies.update()  
+            self.boss.update()
+            self.sword.update()
     # Quit Method (X in corner)
     def quit(self):
         pg.quit()
@@ -81,6 +88,9 @@ class Game:
     def update(self):
         self.test_timer.ticking()
         self.all_sprites.update()
+        # Check if player has lost all hitpoints
+        if self.player.hitpoints <= 0:
+            self.playing = False
 # the Backround Grid
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -96,24 +106,14 @@ class Game:
         text_rect.topleft = (x,y)
         surface.blit(text_surface, text_rect)
 # Cozort Code
-    def draw_health_bar(surf, x, y, pct):
-        if pct < 0:
-            pct = 0
-        BAR_LENGTH = 32
-        BAR_HEIGHT = 10
-        fill = (pct / 100) * BAR_LENGTH
-        outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-        fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
-        pg.draw.rect(surf, GREEN, fill_rect)
-        pg.draw.rect(surf, BLACK, outline_rect, 2)
+    
         
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
-        # self.draw_text(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
-        # self.draw_text(self.screen, str( 30, 60, BLACK, WIDTH/7 - 10, 4)
+        self.draw_text(self.screen, "Coins " + str(self.player.moneybag), 24, BLACK, WIDTH/4 - 70, 4)
         pg.display.flip()
 
 # Key Inputs ( how you move )

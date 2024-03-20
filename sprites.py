@@ -36,6 +36,7 @@ class Cooldown():
 
 class Player(Sprite): 
     def __init__(self, game, x, y):
+        self.hit_cooldown = Cooldown()
         self.groups = game.all_sprites
         Sprite.__init__(self, self.groups)
         self.game = game 
@@ -47,13 +48,10 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.status = ""
-        self.hitpoints = 100
+        self.hitpoints = 3
         # Cozort Code
-        self.weapon_drawn = False
-        self.weapon = ""
-        self.pos = vec(0,0)
-        self.dir = vec(0,0)
+        self.sword = None
+        
     
     def get_mouse(self):
         if pg.mouse.get_rel()[0]:
@@ -107,8 +105,6 @@ class Player(Sprite):
             self.image.fill(BLUE)
 
     def update(self):
-        # self.rect.x = self.x * TILESIZE
-        # self.rect.y = self.y * TILESIZE
         self.get_keys()
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
@@ -117,54 +113,83 @@ class Player(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         self.collide_with_obj(self.game.coins, True, "coin")
+# AI Code
+        # Checks for collisions with enemies
+        hits_enemies = pg.sprite.spritecollide(self, self.game.enemies, False)
+        for enemy in hits_enemies:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1
+                self.hit_cooldown.event_reset()
+# AI Code
+        # Check for collisions with boss
+        hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
+        for boss in hits_boss:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1
+                self.hit_cooldown.event_reset()
+# AI Code
+            # Checks for sword collisions with enemies and boss
+        if self.sword:
+            hits_enemies = pg.sprite.spritecollide(self.sword, self.game.enemy, True)
+            hits_boss = pg.sprite.spritecollide(self.sword, self.game.boss, True)
 
-# Sword Class 
-# Cozort Code
-class Sword(pg.sprite.Sprite):
-    def __init__(self, game, x, y, w, h, dir):
-        self.groups = game.all_sprites, game.weapons
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((w, h))
-        self.image.fill(BLUE)
-        self.rect = self.image.get_rect()
-        self.dir = dir
-        self.w = w
-        self.h = h
-        self.x = x
-        self.y = y
-        self.rect.x = x
-        self.rect.y = y
-        self.speed = 10
-    
+            # Enemy goes byebye (dies)
+            for enemy in hits_enemies:
+                pass  
+            # Boss goes byebye (dies)
+            for boss in hits_boss:
+                pass  
+# AI Code
+        # Sword handling and how you use sword/appears on screen
+        if pg.key.get_pressed()[pg.K_SPACE] and not self.sword:
+            self.sword = Sword(self.game, self)
+            self.game.all_sprites.add(self.sword)
+# AI Code
+        # Updates the sword if it is on screen
+        if self.sword:
+            self.sword.update()
+            # If the sword is no longer on screen, set it to None
+            if not self.sword.alive():
+                self.sword = None
         
-    
-    def update(self):
-        self.pos = self.game.player.pos
-        self.collide_with_group(self.game.mobs, False)
-        if not self.game.player.weapon_drawn:
-            self.kill()
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.enemy
-        pg.sprite.Sprite.__init__(self, self.groups)
+
+# Ai code
+                # Creates Sword class so sword appears on screen and does its job
+class Sword(Sprite):
+    def __init__(self, game, player):
+        super().__init__()
         self.game = game
-    
-    def collide_with_walls(self, dir):
-        if dir == 'x':
-            # print('colliding on the x')
-            hits = pg.sprite.spritecollide(self, self.game.walls, False)
-            if hits:
-                self.vx *= -1
-                self.rect.x = self.x
-        if dir == 'y':
-            # print('colliding on the y')
-            hits = pg.sprite.spritecollide(self, self.game.walls, False)
-            if hits:
-                self.vy *= -1
-                self.rect.y = self.y
-        def update(self):
-            if self.hitpoints < 1:
-                self.kill()
+        self.player = player
+        self.image = pg.Surface((20, 20))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+         # AI Code 
+         # Calculates the position of the sword based from the player's center
+        offset = pg.math.Vector2(30, 0)  
+        self.rect.center = player.rect.center + offset
+
+        self.duration = 0.5  # Duration the sword stays active
+        self.timer = 0
+# AI Code 
+    def update(self):
+        self.timer += self.game.dt
+        if self.timer >= self.duration:
+            self.kill()  # Removes the sword after the duration
+        # Updates sword position with the player
+        offset = pg.math.Vector2(30, 0)  
+        self.rect.center = self.player.rect.center + offset
+
+
+        # Checks for collisions with da enemies and with da bosses
+        hits = pg.sprite.spritecollide(self, self.game.enemies, self.game.boss, False)
+        for enemy in hits:
+            enemy.hitpoints -= 1  # Reduce enemy/boss hitpoints by 1
+        for boss in hits:
+            boss.hitpoints -= 1
+       
+
+
+
 # create a wall class
 # a colladiable object
 class Wall(Sprite):
@@ -224,109 +249,112 @@ def update(self):
         self.rect.height = self.rect.height
 
 class enemy(Sprite):
-    # enemy size/summon
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.enemy
-        Sprite.__init__(self, self.groups)
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(PURPLE)
-        self.rect = self.image.get_rect() 
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.rect = self.image.get_rect()
         self.x = x * TILESIZE
         self.y = y * TILESIZE
-        self.vx = ENEMY_SPEED
-        self.vy = ENEMY_SPEED
-        self.vx *= 0.7071
-        self.vy *= 0.7071 
-        self.hitpoints = 10
-        
+        self.vx, self.vy = 0, 0
+        self.speed = ENEMY_SPEED  
+        self.hitpoints = 3
+ # AI Code       
     def update(self):
-        # self.rect.x = self.x * TILESIZE
-        # self.rect.y = self.y * TILESIZE
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
-        self.rect.x = self.x
-        self.collide_with_walls('x') 
-        self.rect.y = self.y
-        self.collide_with_walls('y')
-    
-    def collide_with_walls(self, dir):
-            #wall collsion w/ enemy
-            if dir == 'x':
-                hits = pg.sprite.spritecollide(self, self.game.enemy, False)
-                if hits: 
-                    if self.vx > 0:
-                        self.x = hits[0].rect.left - self.rect.width
-                    if self.vx < 0:
-                        self.x = hits[0].rect.right
-                    self.vx = 0
-                self.rect.x = self.x
-            if dir == 'y':
-                hits = pg.sprite.spritecollide(self, self.game.enemy, False)
-                if hits: 
-                    if self.vy > 0:
-                        self.y = hits[0].rect.top - self.rect.width
-                    if self.vy < 0:
-                        self.y = hits[0].rect.bottom
-                    self.vy = 0
-                self.rect.y = self.y
+         # Calculates direction vector to player and makes it follow player
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
 
-
-class boss(Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.boss
-        Sprite.__init__(self, self.groups)
-        self.game = game
-        self.test_timer = Cooldown()
-        self.image = pg.Surface((64, 64))
-        self.image.fill(RED)
-        self.rect = self.image.get_rect() 
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
-        self.vx = BOSS_SPEED
-        self.vy = BOSS_SPEED
-        self.vx *= 0.7071
-        self.vy *= 0.7071 
-        self.boss_spawned = False
-        
-        self.test_timer.ticking()
-        if not self.boss_spawned and self.test_timer.delta >= 90:
-            boss(self, 26, 31)
-            self.boss_spawned = True
-
-    def update(self):
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-       
 
-        
+        if self.hitpoints <= 0:
+            self.kill()
+
+    
     def collide_with_walls(self, dir):
-            #wall collsion w/ enemy
-            if dir == 'x':
-                hits = pg.sprite.spritecollide(self, self.game.boss, False)
-                if hits: 
-                    if self.vx > 0:
-                        self.x = hits[0].rect.left - self.rect.width
-                    if self.vx < 0:
-                        self.x = hits[0].rect.right
-                    self.vx = 0
-                self.rect.x = self.x
-            if dir == 'y':
-                hits = pg.sprite.spritecollide(self, self.game.boss, False)
-                if hits: 
-                    if self.vy > 0:
-                        self.y = hits[0].rect.top - self.rect.width
-                    if self.vy < 0:
-                        self.y = hits[0].rect.bottom
-                    self.vy = 0
-                self.rect.y = self.y
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  # Reverse direction
 
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  # Reverse direction
+
+
+class boss(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.boss
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = BOSS_SPEED  
+        self.hitpoints = 10
+        # self.boss_spawned = False
+        
+        # self.test_timer.ticking()
+        # if not self.boss_spawned and self.test_timer.delta >= 90:
+        #     boss(self, 26, 31)
+        #     self.boss_spawned = True
+# AI Code
+    def update(self):
+        # Calculates direction vector to player and makes it follow player
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        
+        if self.hitpoints <= 0:
+            self.kill()
+
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
             
