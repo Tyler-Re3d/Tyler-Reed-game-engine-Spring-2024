@@ -13,7 +13,7 @@ from math import floor
 import images
 
 # Goal: Win
-# 3 things want to add: weapons, boss/different enemies, and hp bar more collectables
+# 3 things want to add: weapons, boss enemies, and hp bar 
 
 # Creating the Game Class
 # This is a function
@@ -29,7 +29,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
-        self.dt = self.clock.tick(FPS) / 1000
+        self.dt = self.clock.tick(FPS) / 1000      
         self.load_data()
         # Load save game Data
     def load_data(self):
@@ -40,6 +40,17 @@ class Game:
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
+# AI Code 
+                # displays healthbar and draws it. Makes it full whne health = full (How it functions)
+    def draw_healthbar(self, surface, x, y, width, height, hitpoints):
+        BAR_LENGTH = width
+        BAR_HEIGHT = height
+        fill = (hitpoints / 3) * BAR_LENGTH
+        outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+        fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+        pg.draw.rect(surface, GREEN, fill_rect)
+        pg.draw.rect(surface, WHITE, outline_rect, 2)
+    
     def new(self):
         self.test_timer = Cooldown()
         print("create new game...")
@@ -113,7 +124,9 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
-        self.draw_text(self.screen, "Coins " + str(self.player.moneybag), 24, BLACK, WIDTH/4 - 70, 4)
+ # AI Code
+        # Draws health bar on da screen/ location where draws
+        self.draw_healthbar(self.screen, 10, 10, 100, 10, self.player.hitpoints)
         pg.display.flip()
 
 # Key Inputs ( how you move )

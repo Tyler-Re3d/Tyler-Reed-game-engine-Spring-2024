@@ -103,6 +103,7 @@ class Player(Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits and desc == "coin":
             self.image.fill(BLUE)
+        
 
     def update(self):
         self.get_keys()
@@ -223,11 +224,7 @@ def collide_with_obj(self, group, kill, desc):
     if hits and desc == "coin":
         self.image.fill(YELLOW)
 
-def collide_with_group(self, group, kill):
-        hits = pg.sprite.spritecollide(self, group, kill)
-        if hits:
-            if str(hits[0].__class__.__name__) == "Coin":
-                self.moneybag += 1
+
 # def spawn_boss():
 
 #     if self.moneybag >= 1:
@@ -313,12 +310,7 @@ class boss(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = BOSS_SPEED  
         self.hitpoints = 10
-        # self.boss_spawned = False
         
-        # self.test_timer.ticking()
-        # if not self.boss_spawned and self.test_timer.delta >= 90:
-        #     boss(self, 26, 31)
-        #     self.boss_spawned = True
 # AI Code
     def update(self):
         # Calculates direction vector to player and makes it follow player
