@@ -5,10 +5,34 @@ import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
 import time
+from math import floor
+
+vec = pg.math.Vector2
 
 # create a player class
 # Our player charcter
-
+# Cozort Code
+class Cooldown():
+    # sets all properties to zero when instantiated...
+    def __init__(self):
+        self.current_time = 0
+        self.event_time = 0
+        self.delta = 0
+        # ticking ensures the timer is counting...
+    # must use ticking to count up or down
+    def ticking(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
+        self.delta = self.current_time - self.event_time
+    # resets event time to zero - cooldown reset
+    def countdown(self, x):
+        x = x - self.delta
+        if x != None:
+            return x
+    def event_reset(self):
+        self.event_time = floor((pg.time.get_ticks())/1000)
+    # sets current time
+    def timer(self):
+        self.current_time = floor((pg.time.get_ticks())/1000)
 
 class Player(Sprite): 
     def __init__(self, game, x, y):
@@ -28,6 +52,8 @@ class Player(Sprite):
         # Cozort Code
         self.weapon_drawn = False
         self.weapon = ""
+        self.pos = vec(0,0)
+        self.dir = vec(0,0)
     
     def get_mouse(self):
         if pg.mouse.get_rel()[0]:
@@ -110,9 +136,8 @@ class Sword(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.speed = 10
-        print("I created a sword")
-    def collide_with_group(self, group, kill):
-                if hits[0].hitpoints -= 1
+    
+        
     
     def update(self):
         self.pos = self.game.player.pos
@@ -254,6 +279,7 @@ class boss(Sprite):
         self.groups = game.all_sprites, game.boss
         Sprite.__init__(self, self.groups)
         self.game = game
+        self.test_timer = Cooldown()
         self.image = pg.Surface((64, 64))
         self.image.fill(RED)
         self.rect = self.image.get_rect() 
@@ -266,7 +292,11 @@ class boss(Sprite):
         self.vx *= 0.7071
         self.vy *= 0.7071 
         self.boss_spawned = False
-
+        
+        self.test_timer.ticking()
+        if not self.boss_spawned and self.test_timer.delta >= 90:
+            boss(self, 26, 31)
+            self.boss_spawned = True
 
     def update(self):
         self.x += self.vx * self.game.dt
@@ -275,14 +305,7 @@ class boss(Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-        self.test_timer.ticking()
-        if not self.boss_spawned and self.test_timer.delta >= 90:
-            boss(self, 26, 31)
-            self.boss_spawned = True
-        self.all_sprites.update()
-
-
-        boss_spawned = True
+       
 
         
     def collide_with_walls(self, dir):

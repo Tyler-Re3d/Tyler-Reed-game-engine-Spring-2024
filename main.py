@@ -16,27 +16,7 @@ import images
 
 # Creating the Game Class
 # This is a function
-class Cooldown():
-    # sets all properties to zero when instantiated...
-    def __init__(self):
-        self.current_time = 0
-        self.event_time = 0
-        self.delta = 0
-        # ticking ensures the timer is counting...
-    # must use ticking to count up or down
-    def ticking(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
-        self.delta = self.current_time - self.event_time
-    # resets event time to zero - cooldown reset
-    def countdown(self, x):
-        x = x - self.delta
-        if x != None:
-            return x
-    def event_reset(self):
-        self.event_time = floor((pg.time.get_ticks())/1000)
-    # sets current time
-    def timer(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
+
      
     
 
@@ -48,6 +28,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
+        self.dt = self.clock.tick(FPS) / 1000
         self.load_data()
         # Load save game Data
     def load_data(self):
@@ -84,12 +65,11 @@ class Game:
                     enemy(self, col, row)
                 if tile == 'B':
                     boss(self, col, row)
-           
+                
     # Run Method
     def run(self):
         self.playing = True
         while self.playing:
-            self.dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update()
             self.draw()
@@ -132,7 +112,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
-        self.draw_text(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
+        # self.draw_text(self.screen, self.player.rect.x, self.player.rect.y-8, self.player.hitpoints)
         # self.draw_text(self.screen, str( 30, 60, BLACK, WIDTH/7 - 10, 4)
         pg.display.flip()
 
