@@ -73,11 +73,11 @@ class Player(Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.vx = -PLAYER_SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_a]:
+        if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.vx = PLAYER_SPEED
-        if keys[pg.K_UP] or keys[pg.K_a]:
+        if keys[pg.K_UP] or keys[pg.K_w]:
             self.vy = -PLAYER_SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_a]:
+        if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vy= PLAYER_SPEED
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071

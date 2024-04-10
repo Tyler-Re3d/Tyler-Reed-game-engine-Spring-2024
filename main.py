@@ -31,7 +31,7 @@ class Game:
         pg.key.set_repeat(500, 100)
         self.dt = self.clock.tick(FPS) / 1000      
         self.load_data()
-        # Load save game Data
+        # Load save game Data      
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
@@ -110,7 +110,7 @@ class Game:
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
-    # Draws the texts in this style
+    # Draws the texts in this style 
     def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
