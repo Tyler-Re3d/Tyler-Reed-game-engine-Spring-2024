@@ -25,3 +25,32 @@ e = 0
 while e < 3:
     print("The One Piece is Real")
     e+=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -10,14 +10,16 @@ import random
 from os import path
 from time import sleep
 from math import floor
-import images
+import images   
 
 # Goal: Win
-# 3 things want to add: weapons, boss enemies, and hp bar 
-
+# 3 things want to add: weapons, boss enemies, and hp bar   
+# 1 thing I will be adding, random spawns/boss spawns after certain amount of eniies killes; 
+#       animate bosses/enemies; maybe boss phases?
 # Creating the Game Class
 # This is a function
 
+# now = pg.time.get_ticks()
      
     
 
@@ -71,7 +73,7 @@ class Game:
                 # print(col)
                 # where classes spawn
                 if tile == '1':
-                    print("a wall at", row, col)
+                    # print("a wall at", row, col)
                     Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
