@@ -31,7 +31,9 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
-        self.dt = self.clock.tick(FPS) / 1000      
+        self.dt = self.clock.tick(FPS) / 1000   
+        self.player = None   
+        self.enemy_spawn_timer = 0
         self.load_data()
         # Load save game Data      
     def load_data(self):
@@ -76,11 +78,13 @@ class Game:
                     # print("a wall at", row, col)
                     Wall(self, col, row)
                 if tile == 'P':
-                    self.player = Player(self, col, row)
+                    self.player = Player(self, col, row)  # Set the player attribute
+                    self.spawn_enemies()
                 if tile == 'C':
                     Coin(self, col, row)
                 if tile == 'E': 
-                    enemy(self, col, row)
+                    new_enemy = enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
+                    new_enemy.spawn(self.screen.get_width(), self.screen.get_height())
                 if tile == 'B':
                     boss(self, col, row)
                 
@@ -103,9 +107,19 @@ class Game:
     def update(self):
         self.test_timer.ticking()
         self.all_sprites.update()
+        self.enemy_spawn_timer += self.dt
+        if self.enemy_spawn_timer > 2:
+            self.spawn_enemies()
+            self.enemy_spawn_timer = 0
         # Check if player has lost all hitpoints
         if self.player.hitpoints <= 0:
             self.playing = False
+    def spawn_enemies(self):
+        for _ in range(12):
+            col = random.randint(0, len(self.map_data[0]) - 1)  # Random column
+            row = random.randint(0, len(self.map_data) - 1)     # Random row
+            if self.map_data[row][col] == '.':
+                enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
 # the Backround Grid
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):

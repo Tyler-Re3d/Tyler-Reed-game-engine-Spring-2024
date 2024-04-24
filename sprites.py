@@ -6,6 +6,8 @@ from os import path
 from pygame.sprite import Sprite
 from settings import *
 import time
+from random import randint
+import random
 from math import floor
 SPRITESHEET = "theBell.png"
 
@@ -310,7 +312,7 @@ def update(self):
         self.rect.height = self.rect.height
 
 class enemy(Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, WIDTH, HEIGHT):
         self.groups = game.all_sprites, game.enemy
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -322,6 +324,18 @@ class enemy(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = ENEMY_SPEED  
         self.hitpoints = 3
+        self.spawn(WIDTH, HEIGHT)
+
+    def spawn(self, WIDTH, HEIGHT):
+        # Set initial position to a random location within the game area
+        self.rect.x = random.randint(0, WIDTH - TILESIZE)
+        self.rect.y = random.randint(0, HEIGHT - TILESIZE)
+        # Ensure enemy does not spawn on top of player
+        while self.game.player and self.rect.colliderect(self.game.player.rect):
+            self.rect.x = random.randint(0, WIDTH - TILESIZE)
+            self.rect.y = random.randint(0, HEIGHT - TILESIZE)
+
+
  # AI Code       
     def update(self):
          # Calculates direction vector to player and makes it follow player
