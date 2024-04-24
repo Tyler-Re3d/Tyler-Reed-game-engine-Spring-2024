@@ -108,7 +108,7 @@ class Game:
         self.test_timer.ticking()
         self.all_sprites.update()
         self.enemy_spawn_timer += self.dt
-        if self.enemy_spawn_timer > 2:
+        if self.enemy_spawn_timer > 100:
             self.spawn_enemies()
             self.enemy_spawn_timer = 0
         # Check if player has lost all hitpoints
