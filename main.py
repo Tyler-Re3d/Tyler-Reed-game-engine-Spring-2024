@@ -65,6 +65,10 @@ class Game:
         self.enemies = pg.sprite.Group()
         self.boss = pg.sprite.Group()
         self.sword = pg.sprite.Group()
+        self.kaido = pg.sprite.Group()
+        self.bigmom = pg.sprite.Group()
+        self.buggy = pg.sprite.Group()
+        self.shanks = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -87,7 +91,14 @@ class Game:
                     new_enemy.spawn(self.screen.get_width(), self.screen.get_height())
                 if tile == 'B':
                     boss(self, col, row)
-                
+                if tile == 'K':
+                    Kaido(self, col, row)
+                if tile == 'M':
+                    Bigmom(self, col, row)
+                if tile == 'U':
+                    Buggy(self, col, row)
+                if tile =='S':
+                    Shanks(self, col, row)
     # Run Method
     def run(self):
         self.playing = True

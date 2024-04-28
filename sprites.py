@@ -73,7 +73,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.hitpoints = 300
+        self.hitpoints = 30000
         # Cozort Code
         self.sword = None
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
@@ -378,6 +378,220 @@ class enemy(Sprite):
 class boss(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.boss
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = BOSS_SPEED  
+        self.hitpoints = 10
+        
+# AI Code
+    def update(self):
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        # dies when hitpoints are gone
+        if self.hitpoints <= 0:
+            self.kill()
+
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
+            
+
+class Kaido(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Kaido
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = BOSS_SPEED  
+        self.hitpoints = 10
+        
+# AI Code
+    def update(self):
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        # dies when hitpoints are gone
+        if self.hitpoints <= 0:
+            self.kill()
+
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
+
+
+class Bigmom(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Bigmom
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = BOSS_SPEED  
+        self.hitpoints = 10
+        
+# AI Code
+    def update(self):
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        # dies when hitpoints are gone
+        if self.hitpoints <= 0:
+            self.kill()
+
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
+            
+class Buggy(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Buggy
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = BOSS_SPEED  
+        self.hitpoints = 10
+        
+# AI Code
+    def update(self):
+        # Calculates direction vector to player and makes it follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalizes the direction vector and scales the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+# multiplies velocity by delta time
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        # dies when hitpoints are gone
+        if self.hitpoints <= 0:
+            self.kill()
+
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
+            
+class Shanks(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.Shanks
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
