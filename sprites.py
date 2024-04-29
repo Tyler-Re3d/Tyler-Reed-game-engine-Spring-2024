@@ -73,7 +73,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.hitpoints = 3
+        self.hitpoints = 30
         # Cozort Code
         self.sword = None
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
@@ -165,7 +165,7 @@ class Player(Sprite):
         hits_enemy= pg.sprite.spritecollide(self, self.game.enemy, False)
         for enemy in hits_enemy:
             if self.hit_cooldown.countdown(1):
-                self.hitpoints -= 1  # Reduce player's hitpoints by 1 when hit by enemy
+                self.hitpoints -= 0.1  # Reduce player's hitpoints by 1 when hit by enemy
                 self.hit_cooldown.event_reset()
 # AI Code
         # Check for collisions with boss
