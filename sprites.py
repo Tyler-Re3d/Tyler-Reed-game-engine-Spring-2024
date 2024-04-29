@@ -248,12 +248,39 @@ class Sword(Sprite):
 
 
         # Checks for collisions with da enemies and with da bosses
-        hits = pg.sprite.spritecollide(self, self.game.enemies, self.game.boss, False)
-        for enemy in hits:
-            enemy.hitpoints -= 1  # Reduce enemy/boss hitpoints by 1 when hit by sword
-        for boss in hits:
-            boss.hitpoints -= 1   # reduces boss hitpoints when hit by sword by 1
-       
+    def update(self):
+        self.timer += self.game.dt
+        if self.timer >= self.duration:
+            self.kill()
+        offset = pg.math.Vector2(30, 0)
+        self.rect.center = self.player.rect.center + offset
+
+        # Check for collisions with enemies and bosses
+        hits_enemies = pg.sprite.spritecollide(self, self.game.enemy, True)
+        hits_boss = pg.sprite.spritecollide(self, self.game.boss, True)
+        hits_kaido = pg.sprite.spritecollide(self, self.game.kaido, True)
+        hits_buggy = pg.sprite.spritecollide(self, self.game.buggy, True)
+        hits_bigmom = pg.sprite.spritecollide(self, self.game.bigmom, True)
+        hits_shanks = pg.sprite.spritecollide(self, self.game.shanks, True)
+
+        # Reduce hitpoints of collided enemies and bosses
+        for enemy in hits_enemies:
+            enemy.hitpoints -= 1
+
+        for boss in hits_boss:
+            boss.hitpoints -= 1
+
+        for kaido in hits_kaido:
+            kaido.hitpoints -= 1
+
+        for buggy in hits_buggy:
+            buggy.hitpoints -= 1
+
+        for bigmom in hits_bigmom:
+            bigmom.hitpoints -= 1
+
+        for shanks in hits_shanks:
+            shanks.hitpoints -= 1
 
 
 
@@ -288,7 +315,7 @@ class Coin(Sprite):
 def collide_with_obj(self, group, kill, desc):
     hits = pg.sprite.spritecollide(self, group, kill)
     if hits and desc == "coin":
-        self.image.fill(YELLOW)
+        hits[0].kill()
 
 
 # def spawn_boss():
@@ -431,7 +458,7 @@ class boss(Sprite):
 
 class Kaido(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.Kaido
+        self.groups = game.all_sprites, game.kaido
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
@@ -485,7 +512,7 @@ class Kaido(Sprite):
 
 class Bigmom(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.Bigmom
+        self.groups = game.all_sprites, game.bigmom
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
@@ -538,7 +565,7 @@ class Bigmom(Sprite):
             
 class Buggy(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.Buggy
+        self.groups = game.all_sprites, game.buggy
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
@@ -591,7 +618,7 @@ class Buggy(Sprite):
             
 class Shanks(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.Shanks
+        self.groups = game.all_sprites, game.shanks
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
