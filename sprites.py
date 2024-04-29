@@ -73,7 +73,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.hitpoints = 30000
+        self.hitpoints = 3
         # Cozort Code
         self.sword = None
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
@@ -482,7 +482,7 @@ class Kaido(Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
-        self.image.fill(RED)
+        self.image.fill(DARKBLUE)
         self.rect = self.image.get_rect()
         self.x = x * TILESIZE
         self.y = y * TILESIZE
@@ -506,19 +506,20 @@ class Kaido(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         
-        # Check if Bigmom collides with the sword
+        # Ai Code
+        # checks if Kaido has been hit by sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
-            self.hitpoints -= 1  # Reduce hitpoints
+            self.hitpoints -= 1  # When sword hits Reduces da hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
-                self.kill()  # Kill Bigmom
-
+                self.spawn_enemies()  # Spawn da enemies if hitpoints are gone
+                self.kill()  # Kills Kaido if hitpoints = 0
+# Ai Code spawns the enemy randomly
     def spawn_enemies(self, num_enemies):
-        for _ in range(num_enemies):
-            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+        for _ in range(num_enemies): #da number of enemies
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawn at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
@@ -549,22 +550,22 @@ class Bigmom(Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
-        self.image.fill(BLUE)
+        self.image.fill(PINK)
         self.rect = self.image.get_rect()
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = BIGMOM_SPEED  
         self.hitpoints = 10
-        
+    
     def update(self):
-        # Calculate direction vector to player and make Bigmom follow player's center
+        # Calculate direction vector to player and make Bigmom target player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalize the direction vector and scale the boss by speed
+        # Normalizes the direction vector and scale the boss by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
 
-        # Multiply velocity by delta time 
+        # Multiplies velocity by delta time 
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
@@ -572,19 +573,19 @@ class Bigmom(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         
-        # Check if Bigmom collides with the sword
+        # Checking if Bigmom collides with da sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
-            self.hitpoints -= 1  # Reduce hitpoints
+            self.hitpoints -= 1  # When sword hits Reduces da hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
-                self.kill()  # Kill Bigmom
-
+                self.spawn_enemies()  # Spawn da enemies if hitpoints are gone
+                self.kill()  # Kill Bigmom if hp = 0
+# spawn enemies randomly
     def spawn_enemies(self, num_enemies):
-        for _ in range(num_enemies):
-            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+        for _ in range(num_enemies): # number o'enemies
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawns at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
@@ -613,7 +614,7 @@ class Buggy(Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((64, 64))
-        self.image.fill(BLACK)
+        self.image.fill(ORANGE)
         self.rect = self.image.get_rect()
         self.x = x * TILESIZE
         self.y = y * TILESIZE
@@ -623,9 +624,9 @@ class Buggy(Sprite):
         
 # AI Code
     def update(self):
-        # Calculate direction vector to player and make Bigmom follow player's center
+        # Calculate direction vector to player and make Buggy follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalize the direction vector and scale the boss by speed
+        # Normalizes the direction vector and scale the boss by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
 
@@ -637,19 +638,19 @@ class Buggy(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         
-        # Check if Bigmom collides with the sword
+        # Check if Buggy collides with the sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
-            self.hitpoints -= 1  # Reduce hitpoints
+            self.hitpoints -= 1  # If hit it shall Reduce hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
-                self.kill()  # Kill Bigmom
-
+                self.spawn_enemies()  # Spawns da enemies if hitpoints are zero
+                self.kill()  # Kills Buggy if hp = 0
+# Ai Code Spawns enemies randomly
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies):
-            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawns at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Spawns at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
@@ -703,32 +704,32 @@ class Shanks(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         
-        # Check if Bigmom collides with the sword
+        # Check if Shanks  collides with the sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
-            self.hitpoints -= 1  # Reduce hitpoints
-            sword_hit.kill()  # Remove the sword
+            self.hitpoints -= 1  # if hit Reduce da hitpoints
+            sword_hit.kill()  # Removes the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
-                self.kill()  # Kill Bigmom
-
+                self.spawn_enemies()  # Spawn enemies if SHank hp = 0
+                self.kill()  # Kill Shanks if hp = 0
+#Ai code spanws randomly
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies):
-            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # spawns enemies at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # spawns enemies at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
 # multiplies velocity by delta time
-        self.x += self.vx * self.game.dt
-        self.y += self.vy * self.game.dt
-        self.rect.x = self.x
-        self.collide_with_walls('x')
-        self.rect.y = self.y
-        self.collide_with_walls('y')
-        # dies when hitpoints are gone
-        if self.hitpoints <= 0:
-            self.kill()
+        # self.x += self.vx * self.game.dt
+        # self.y += self.vy * self.game.dt
+        # self.rect.x = self.x
+        # self.collide_with_walls('x')
+        # self.rect.y = self.y
+        # self.collide_with_walls('y')
+        # # dies when hitpoints are gone
+        # if self.hitpoints <= 0:
+        #     self.kill()
 
         # Allows Collision with wall
     def collide_with_walls(self, dir):
