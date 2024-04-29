@@ -131,6 +131,13 @@ class Game:
             row = random.randint(0, len(self.map_data) - 1)     # Random row
             if self.map_data[row][col] == '.':
                 enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
+
+    def spawn_additional_enemies(self, num_enemies):
+        for _ in range(num_enemies):
+            col = random.randint(0, len(self.map_data[0]) - 1)  # Random column
+            row = random.randint(0, len(self.map_data) - 1)     # Random row
+        if self.map_data[row][col] == '.':
+            enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
 # the Backround Grid
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
