@@ -162,8 +162,8 @@ class Player(Sprite):
         self.collide_with_obj(self.game.coins, True, "coin")
 # AI Code
         # Checks for collisions with enemies
-        hits_enemies = pg.sprite.spritecollide(self, self.game.enemies, False)
-        for enemy in hits_enemies:
+        hits_enemy= pg.sprite.spritecollide(self, self.game.enemy, False)
+        for enemy in hits_enemy:
             if self.hit_cooldown.countdown(1):
                 self.hitpoints -= 1  # Reduce player's hitpoints by 1 when hit by enemy
                 self.hit_cooldown.event_reset()
