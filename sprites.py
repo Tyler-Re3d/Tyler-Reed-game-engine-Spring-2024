@@ -467,7 +467,7 @@ class Kaido(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
-        self.speed = BOSS_SPEED  
+        self.speed = KAIDO_SPEED  
         self.hitpoints = 10
         
 # AI Code
@@ -521,7 +521,7 @@ class Bigmom(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
-        self.speed = BOSS_SPEED  
+        self.speed = BIGMOM_SPEED  
         self.hitpoints = 10
         
 # AI Code
@@ -574,7 +574,7 @@ class Buggy(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
-        self.speed = BOSS_SPEED  
+        self.speed = BUGGY_SPEED  
         self.hitpoints = 10
         
 # AI Code
@@ -627,7 +627,7 @@ class Shanks(Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
-        self.speed = BOSS_SPEED  
+        self.speed = SHANK_SPEED  
         self.hitpoints = 10
         
 # AI Code
