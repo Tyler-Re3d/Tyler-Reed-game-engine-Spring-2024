@@ -174,6 +174,30 @@ class Player(Sprite):
             if self.hit_cooldown.countdown(1):
                 self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
                 self.hit_cooldown.event_reset()
+                
+        hits_Kaido = pg.sprite.spritecollide(self, self.game.kaido, False)
+        for Kaido in hits_Kaido:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
+                self.hit_cooldown.event_reset()
+        
+        hits_Bigmom = pg.sprite.spritecollide(self, self.game.bigmom, False)
+        for Bigmom in hits_Bigmom:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
+                self.hit_cooldown.event_reset()
+
+        hits_Buggy = pg.sprite.spritecollide(self, self.game.buggy, False)
+        for Buggy in hits_Buggy:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
+                self.hit_cooldown.event_reset()
+
+        hits_Shanks = pg.sprite.spritecollide(self, self.game.shanks, False)
+        for Shanks in hits_Shanks:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
+                self.hit_cooldown.event_reset()
 # AI Code
             # Checks for sword collisions with enemies and da boss
         if self.sword:
