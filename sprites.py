@@ -255,6 +255,12 @@ class Sword(Sprite):
         hits_enemies = pg.sprite.spritecollide(self, self.game.enemy, False)
         hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
         hits_kaido = pg.sprite.spritecollide(self, self.game.kaido, False)
+        for kaido in hits_kaido:
+            kaido.hitpoints -= 1
+            if kaido.hitpoints <= 0:
+                kaido.spawn_enemies(1)
+                kaido.kill()
+                self.kill()
         hits_buggy = pg.sprite.spritecollide(self, self.game.buggy, False)
         for buggy in hits_buggy:
             buggy.hitpoints -= 1
@@ -266,10 +272,16 @@ class Sword(Sprite):
         for bigmom in hits_bigmom:
             bigmom.hitpoints -= 1
             if bigmom.hitpoints <= 0:
-                bigmom.spawn_enemies(2)
+                bigmom.spawn_enemies(1)
                 bigmom.kill()
                 self.kill()
         hits_shanks = pg.sprite.spritecollide(self, self.game.shanks, False)
+        for shanks in hits_shanks:
+            shanks.hitpoints -= 1
+            if shanks.hitpoints <= 0:
+                shanks.spawn_enemies(1)
+                shanks.kill()
+                self.kill()
 
         # Reduce hitpoints of collided enemies and bosses
         for enemy in hits_enemies:
@@ -480,22 +492,35 @@ class Kaido(Sprite):
         
 # AI Code
     def update(self):
-        # Calculates direction vector to player and makes it follow player's center
+        # Calculate direction vector to player and make Bigmom follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalizes the direction vector and scales the boss by speed
+        # Normalize the direction vector and scale the boss by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
 
-# multiplies velocity by delta time
+        # Multiply velocity by delta time 
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-        # dies when hitpoints are gone
-        if self.hitpoints <= 0:
-            self.kill()
+        
+        # Check if Bigmom collides with the sword
+        sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
+        if sword_hit:
+            self.hitpoints -= 1  # Reduce hitpoints
+            sword_hit.kill()  # Remove the sword
+            if self.hitpoints <= 0:
+                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
+                self.kill()  # Kill Bigmom
+
+    def spawn_enemies(self, num_enemies):
+        for _ in range(num_enemies):
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+            if self.game.map_data[row][col] == '.':
+                enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
         # Allows Collision with wall
     def collide_with_walls(self, dir):
@@ -664,11 +689,35 @@ class Shanks(Sprite):
         
 # AI Code
     def update(self):
-        # Calculates direction vector to player and makes it follow player's center
+        # Calculate direction vector to player and make Bigmom follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalizes the direction vector and scales the boss by speed
+        # Normalize the direction vector and scale the boss by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
+
+        # Multiply velocity by delta time 
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        
+        # Check if Bigmom collides with the sword
+        sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
+        if sword_hit:
+            self.hitpoints -= 1  # Reduce hitpoints
+            sword_hit.kill()  # Remove the sword
+            if self.hitpoints <= 0:
+                self.spawn_enemies()  # Spawn enemies if hitpoints are zero
+                self.kill()  # Kill Bigmom
+
+    def spawn_enemies(self, num_enemies):
+        for _ in range(num_enemies):
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Random row
+            if self.game.map_data[row][col] == '.':
+                enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
 # multiplies velocity by delta time
         self.x += self.vx * self.game.dt
