@@ -73,7 +73,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.hitpoints = 30
+        self.hitpoints = 300
         # Cozort Code
         self.sword = None
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
@@ -512,7 +512,7 @@ class Kaido(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = KAIDO_SPEED  
-        self.hitpoints = 10
+        self.hitpoints = 100
         
 # AI Code
     def update(self):

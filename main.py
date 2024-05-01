@@ -12,10 +12,11 @@ from time import sleep
 from math import floor
 import images   
 
-# Goal: Win
+# Goal: Win/ Survive
 # 3 things want to add: weapons, boss enemies, and hp bar   
-# 1 thing I will be adding, random spawns/boss spawns after certain amount of eniies killes; 
-#       animate bosses/enemies; maybe boss phases?
+
+# 1 NEW thing I will be adding, random enemy spawns; boss spawns enemy after being killed 
+
 # Creating the Game Class
 # This is a function
 
@@ -49,7 +50,7 @@ class Game:
     def draw_healthbar(self, surface, x, y, width, height, hitpoints):
         BAR_LENGTH = width
         BAR_HEIGHT = height
-        fill = (hitpoints / 30) * BAR_LENGTH
+        fill = (hitpoints / 300) * BAR_LENGTH
         outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
         fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
         pg.draw.rect(surface, GREEN, fill_rect)
@@ -125,17 +126,18 @@ class Game:
         # Check if player has lost all hitpoints
         if self.player.hitpoints <= 0:
             self.playing = False
+    # Ai code spawns enemies randomly
     def spawn_enemies(self):
         for _ in range(12):
-            col = random.randint(0, len(self.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.map_data) - 1)     # Random row
+            col = random.randint(0, len(self.map_data[0]) - 1)  # Spawns enemies at a ranndom column
+            row = random.randint(0, len(self.map_data) - 1)     # Spawns enemies at a Random row
             if self.map_data[row][col] == '.':
                 enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
-
+# Ai code spwns boss spawned anemies randomly
     def spawn_additional_enemies(self, num_enemies):
         for _ in range(num_enemies):
-            col = random.randint(0, len(self.map_data[0]) - 1)  # Random column
-            row = random.randint(0, len(self.map_data) - 1)     # Random row
+            col = random.randint(0, len(self.map_data[0]) - 1)  # Spawns at a Random column
+            row = random.randint(0, len(self.map_data) - 1)     # Spawns at a random d   d     Random row
         if self.map_data[row][col] == '.':
             enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
 # the Backround Grid
