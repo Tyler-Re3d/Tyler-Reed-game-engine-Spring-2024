@@ -50,7 +50,7 @@ class Game:
     def draw_healthbar(self, surface, x, y, width, height, hitpoints):
         BAR_LENGTH = width
         BAR_HEIGHT = height
-        fill = (hitpoints / 300) * BAR_LENGTH
+        fill = (hitpoints / 500) * BAR_LENGTH
         outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
         fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
         pg.draw.rect(surface, GREEN, fill_rect)

@@ -73,7 +73,7 @@ class Player(Sprite):
         self.y = y * TILESIZE
         self.moneybag = 0
         self.speed = 300
-        self.hitpoints = 300
+        self.hitpoints = 500
         # Cozort Code
         self.sword = None
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
@@ -512,7 +512,7 @@ class Kaido(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = KAIDO_SPEED  
-        self.hitpoints = 100
+        self.hitpoints = 500
         
 # AI Code
     def update(self):
@@ -580,7 +580,7 @@ class Bigmom(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = BIGMOM_SPEED  
-        self.hitpoints = 10
+        self.hitpoints = 500
     
     def update(self):
         # Calculate direction vector to player and make Bigmom target player's center
@@ -644,7 +644,7 @@ class Buggy(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = BUGGY_SPEED  
-        self.hitpoints = 10
+        self.hitpoints = 500
         
 # AI Code
     def update(self):
@@ -710,7 +710,7 @@ class Shanks(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = SHANK_SPEED  
-        self.hitpoints = 10
+        self.hitpoints = 500
         
 # AI Code
     def update(self):
