@@ -35,6 +35,7 @@ class Game:
         self.dt = self.clock.tick(FPS) / 1000   
         self.player = None   
         self.enemy_spawn_timer = 0
+        self.enemy_kills = 0
         self.load_data()
         # Load save game Data      
     def load_data(self):
@@ -120,6 +121,9 @@ class Game:
         self.test_timer.ticking()
         self.all_sprites.update()
         self.enemy_spawn_timer += self.dt
+        enemy_collisions = pg.sprite.groupcollide(self.sword, self.enemy, self.enemies, True, True)
+        for sword, enemies in enemy_collisions.items():
+            self.enemy_kills += len(enemies)
         if self.enemy_spawn_timer > 100:
             self.spawn_enemies()
             self.enemy_spawn_timer = 0
@@ -161,6 +165,8 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
+        self.draw_text(self.screen, f"Enemies Killed: {self.enemy_kills}", 24, YELLOW, WIDTH - 900, 2)
+
  # AI Code
         # Draws health bar on da screen/ location where draws relative to de player's health
         self.draw_healthbar(self.screen, 10, 10, 100, 10, self.player.hitpoints)

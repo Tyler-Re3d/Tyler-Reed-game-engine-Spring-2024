@@ -277,7 +277,16 @@ class Sword(Sprite):
 
         # Check for collisions with enemies and bosses
         hits_enemies = pg.sprite.spritecollide(self, self.game.enemy, False)
+        for enemy in hits_enemies:
+            enemy.hitpoints -= 1
+            if enemy.hitpoints <= 0:
+                enemy.kill()
+                self.game.enemy_kills += 1
         hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
+        for boss in hits_boss:
+            boss.hitpoints -= 1
+            if boss.hitpoints <= 0:
+                boss.kill()
         hits_kaido = pg.sprite.spritecollide(self, self.game.kaido, False)
         for kaido in hits_kaido:
             kaido.hitpoints -= 1
@@ -308,23 +317,23 @@ class Sword(Sprite):
                 self.kill()
 
         # Reduce hitpoints of collided enemies and bosses
-        for enemy in hits_enemies:
-            enemy.hitpoints -= 1
+        # for enemy in hits_enemies:
+        #     enemy.hitpoints -= 1
 
-        for boss in hits_boss:
-            boss.hitpoints -= 1
+        # for boss in hits_boss:
+        #     boss.hitpoints -= 1
 
-        for kaido in hits_kaido:
-            kaido.hitpoints -= 1
+        # for kaido in hits_kaido:
+        #     kaido.hitpoints -= 1
 
-        for buggy in hits_buggy:
-            buggy.hitpoints -= 1
+        # for buggy in hits_buggy:
+        #     buggy.hitpoints -= 1
 
-        for bigmom in hits_bigmom:
-            bigmom.hitpoints -= 1
+        # for bigmom in hits_bigmom:
+        #     bigmom.hitpoints -= 1
 
-        for shanks in hits_shanks:
-            shanks.hitpoints -= 1
+        # for shanks in hits_shanks:
+        #     shanks.hitpoints -= 1
 
 
 
