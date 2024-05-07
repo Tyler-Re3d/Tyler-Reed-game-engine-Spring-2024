@@ -121,9 +121,9 @@ class Game:
         self.test_timer.ticking()
         self.all_sprites.update()
         self.enemy_spawn_timer += self.dt
-        enemy_collisions = pg.sprite.groupcollide(self.sword, self.enemy, self.enemies, True, True)
+        enemy_collisions = pg.sprite.groupcollide(self.sword, self.enemy, self.enemies, True)
         for sword, enemies in enemy_collisions.items():
-            self.enemy_kills += len(enemies)
+            self.enemy_kills += 1
         if self.enemy_spawn_timer > 100:
             self.spawn_enemies()
             self.enemy_spawn_timer = 0

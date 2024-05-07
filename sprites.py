@@ -279,9 +279,9 @@ class Sword(Sprite):
         hits_enemies = pg.sprite.spritecollide(self, self.game.enemy, False)
         for enemy in hits_enemies:
             enemy.hitpoints -= 1
+            self.game.enemy_kills += 1
             if enemy.hitpoints <= 0:
                 enemy.kill()
-                self.game.enemy_kills += 1
         hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
         for boss in hits_boss:
             boss.hitpoints -= 1
