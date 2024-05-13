@@ -654,6 +654,8 @@ class Buggy(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = BUGGY_SPEED  
         self.hitpoints = 500
+        self.shoot_delay = 1000  # Delay between shots in milliseconds
+        self.last_shot = pg.time.get_ticks()  # Time of the last shot
         
 # AI Code
     def update(self):
@@ -670,6 +672,10 @@ class Buggy(Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
+        now = pg.time.get_ticks()
+        if now - self.last_shot > self.shoot_delay:
+            self.last_shot = now
+            self.shoot()
         
         # Check if Buggy collides with the sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
@@ -686,6 +692,11 @@ class Buggy(Sprite):
             row = random.randint(0, len(self.game.map_data) - 1)     # Spawns at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
+    
+    def shoot(self):
+        bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, self.vx, self.vy)
+        self.game.all_sprites.add(bullet)
+        self.game.bullets.add(bullet)
 
         # Allows Collision with wall
     def collide_with_walls(self, dir):
@@ -706,6 +717,35 @@ class Buggy(Sprite):
                 if self.vy < 0:
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  
+
+class Bullet(Sprite):
+    def __init__(self, game, x, y, vx, vy):
+        self.groups = game.all_sprites, game.bullets
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((16, 16))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.vx = vx * 10  # Bullet speed is double the buggy's speed
+        self.vy = vy * 10  # Bullet speed is double the buggy's speed
+
+    def update(self):
+        self.rect.x += self.vx * self.game.dt
+        self.rect.y += self.vy * self.game.dt
+
+        hits = pg.sprite.spritecollide(self, self.game.player_group, False)
+        for hit in hits:
+            hit.hitpoints -= 1
+            self.kill()
+        # Kill the bullet if it goes off screen
+        if not self.game.screen.get_rect().colliderect(self.rect):
+            self.kill()
+
+        # Check for collision with walls
+        wall_hit = pg.sprite.spritecollideany(self, self.game.walls)
+        if wall_hit:
+            self.kill()
             
 class Shanks(Sprite):
     def __init__(self, game, x, y):

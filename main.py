@@ -71,6 +71,8 @@ class Game:
         self.bigmom = pg.sprite.Group()
         self.buggy = pg.sprite.Group()
         self.shanks = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
+        self.player_group = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -165,7 +167,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, str(self.test_timer.countdown(100)), 24, YELLOW, WIDTH/2 - 35, 2)
-        self.draw_text(self.screen, f"Enemies Killed: {self.enemy_kills}", 24, YELLOW, WIDTH - 900, 2)
+        self.draw_text(self.screen, "Enemies Killed: " + str(self.enemy_kills), 24, YELLOW, WIDTH - 900, 2)
 
  # AI Code
         # Draws health bar on da screen/ location where draws relative to de player's health
