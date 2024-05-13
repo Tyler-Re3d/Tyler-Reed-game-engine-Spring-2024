@@ -590,6 +590,7 @@ class Bigmom(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = BIGMOM_SPEED  
         self.hitpoints = 500
+        self.last_spawn_time = 0
     
     def update(self):
         # Calculate direction vector to player and make Bigmom target player's center
@@ -606,6 +607,11 @@ class Bigmom(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
         
+        now = pg.time.get_ticks()
+        if now - self.last_spawn_time > 2000:  # 2000 milliseconds = 2 seconds
+            self.last_spawn_time = now
+            self.spawn_enemies(1)
+
         # Checking if Bigmom collides with da sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
