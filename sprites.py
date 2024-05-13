@@ -24,7 +24,6 @@ class Spritesheet:
     # utility class for loading and parsing spritesheets
     def __init__(self, filename):
         self.spritesheet = pg.image.load(filename).convert()
-
     def get_image(self, x, y, width, height):
         # grab an image out of a larger spritesheet
         image = pg.Surface((width, height))
@@ -291,9 +290,17 @@ class Sword(Sprite):
         for kaido in hits_kaido:
             kaido.hitpoints -= 1
             if kaido.hitpoints <= 0:
+                print("mmmm")
                 kaido.spawn_enemies(1)
                 kaido.kill()
+                kaido.spawn_Kb()
                 self.kill()
+        hits_kb = pg.sprite.spritecollide(self, self.game.kb, False)
+        for kb in hits_kb:
+            kb.hitpoints -= 1
+            kb.spawn_enemies(1)
+            kb.kill()
+            self.kill()
         hits_buggy = pg.sprite.spritecollide(self, self.game.buggy, False)
         for buggy in hits_buggy:
             buggy.hitpoints -= 1
@@ -521,7 +528,7 @@ class Kaido(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = KAIDO_SPEED  
-        self.hitpoints = 500
+        self.hitpoints = 100
         
 # AI Code
     def update(self):
@@ -543,18 +550,31 @@ class Kaido(Sprite):
         # checks if Kaido has been hit by sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
+            print("hits")
             self.hitpoints -= 1  # When sword hits Reduces da hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn da enemies if hitpoints are gone
+                print("Kaido ded, spawning K2")
+                self.spawn_enemies(1)  # Spawn da enemies if hitpoints are gone
+                self.spawn_Kb()
                 self.kill()  # Kills Kaido if hitpoints = 0
 # Ai Code spawns the enemy randomly
     def spawn_enemies(self, num_enemies):
+        print("Spawning enemies")
         for _ in range(num_enemies): #da number of enemies
             col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawn at Random column
             row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
+    
+    def spawn_Kb(self):
+        print("Spawning KB")
+        for _ in range(1): #da number of enemies
+            print("x")
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawn at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
+            if self.game.map_data[row][col] == '.':
+                Kb(self.game, col, row)
 
         # Allows Collision with wall
     def collide_with_walls(self, dir):
@@ -576,6 +596,71 @@ class Kaido(Sprite):
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  
 
+class Kb(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.kb
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((64, 64))
+        self.image.fill(INDIGO)
+        self.rect = self.image.get_rect()
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.vx, self.vy = 0, 0
+        self.speed = K2_SPEED  
+        self.hitpoints = 1000
+        
+# AI Code
+    def update(self):
+        # Calculate direction vector to player and make Bigmom follow player's center
+        direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
+        # Normalize the direction vector and scale the boss by speed
+        if direction.length() > 0:
+            self.vx, self.vy = direction.normalize() * self.speed
+
+        # Multiply velocity by delta time 
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+        self.rect.y = self.y
+        self.collide_with_walls('y')
+        
+        # Ai Code
+        # checks if K2 has been hit by sword
+        sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
+        if sword_hit:
+            self.hitpoints -= 1  # When sword hits Reduces da hitpoints
+            sword_hit.kill()  # Remove the sword
+            if self.hitpoints <= 0:
+                self.kill()  # Kills Kaido if hitpoints = 0
+        # Allows Collision with wall
+    def collide_with_walls(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vx > 0:
+                    self.rect.right = wall.rect.left
+                if self.vx < 0:
+                    self.rect.left = wall.rect.right
+                self.vx *= -1  
+
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            for wall in hits:
+                if self.vy > 0:
+                    self.rect.bottom = wall.rect.top
+                if self.vy < 0:
+                    self.rect.top = wall.rect.bottom
+                self.vy *= -1  
+
+    def spawn_enemies(self, num_enemies):
+        print("Spawning enemies")
+        for _ in range(num_enemies): #da number of enemies
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawn at Random column
+            row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
+            if self.game.map_data[row][col] == '.':
+                enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
 class Bigmom(Sprite):
     def __init__(self, game, x, y):

@@ -72,7 +72,9 @@ class Game:
         self.buggy = pg.sprite.Group()
         self.shanks = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
+        self.katana = pg.sprite.Group()
         self.player_group = pg.sprite.Group()
+        self.kb = pg.sprite.Group()
        # self.player = Player(self, 10, 10)
        # for x in range(10, 20):
         #    Wall(self, x, 5)
@@ -143,9 +145,17 @@ class Game:
     def spawn_additional_enemies(self, num_enemies):
         for _ in range(num_enemies):
             col = random.randint(0, len(self.map_data[0]) - 1)  # Spawns at a Random column
-            row = random.randint(0, len(self.map_data) - 1)     # Spawns at a random d   d     Random row
+            row = random.randint(0, len(self.map_data) - 1)     # Spawns at a Random row
         if self.map_data[row][col] == '.':
             enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
+    
+    def spawn_Kb(self):
+        for _ in range(1):
+            col = random.randint(0, len(self.map_data[0]) - 1)  # Spawn at Random column
+            row = random.randint(0, len(self.map_data) - 1)     # Spawn at Random row
+        if self.map_data[row][col] == '.':
+            Kb(self, col, row)
+
 # the Backround Grid
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
