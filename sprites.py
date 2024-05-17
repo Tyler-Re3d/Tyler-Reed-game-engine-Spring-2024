@@ -33,7 +33,6 @@ class Spritesheet:
         return image
 
 
-
 # Cooldown class (set up time)
 class Cooldown():
     # sets all properties to zero when instantiated...
@@ -42,12 +41,12 @@ class Cooldown():
         self.event_time = 0
         self.delta = 0
         # ticking ensures the timer is counting...
-    # must use ticking to count up or down
+        #must use ticking to count up or down
         # the time and how it works
     def ticking(self):
         self.current_time = floor((pg.time.get_ticks())/1000)
         self.delta = self.current_time - self.event_time
-    # resets event time to zero - cooldown reset
+        # resets event time to zero - cooldown reset
     def countdown(self, x):
         x = x - self.delta
         if x != None:
@@ -92,11 +91,7 @@ class Player(Sprite):
         if pg.mouse.get_pressed()[0]:
             if not self.weapon_drawn:
                 self.weapon_drawn = True
-        
 
-    # def move(self, dx= 0, dy = 0):
-    #     self.x += dx
-    #     self.y += dy
 # the keys you use
     def get_keys(self): 
         self.vx, self.vy = 0, 0
@@ -135,8 +130,6 @@ class Player(Sprite):
 # kills coins
     def collide_with_obj(self, group, kill, desc):
         hits = pg.sprite.spritecollide(self, group, kill)
-        # if hits and desc == "coin":
-        #     self.image.fill(BLUE)
         
     def animate(self):
         now = pg.time.get_ticks()
@@ -167,7 +160,7 @@ class Player(Sprite):
                 self.hitpoints -= 0.1  # Reduce player's hitpoints by 1 when hit by enemy
                 self.hit_cooldown.event_reset()
 # AI Code
-        # Check for collisions with boss
+        # Check for collisions with bosses
         hits_boss = pg.sprite.spritecollide(self, self.game.boss, False)
         for boss in hits_boss:
             if self.hit_cooldown.countdown(1):
@@ -231,23 +224,6 @@ class Player(Sprite):
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0, 0, 32, 32),
                                 self.spritesheet.get_image(32, 0, 32, 32)]
-        # for frame in self.standing_frames:
-        #     frame.set_colorkey(BLACK)
-        # self.walk_frames_r = [self.spritesheet.get_image(678, 860, 120, 201),
-        #                       self.spritesheet.get_image(692, 1458, 120, 207)]
-        # self.walk_frames_l = []
-        # for frame in self.walk_frames_r:
-        #     frame.set_colorkey(BLACK)
-        #     self.walk_frames_l.append(pg.transform.flip(frame, True, False))
-        # self.jump_frame = self.spritesheet.get_image(256, 0, 128, 128)
-        # self.jump_frame.set_colorkey(BLACK)
-    
-    
-        # if self.jumping:
-        #     bottom = self.rect.bottom
-        #     self.image = self.jump_frame
-        #     self.rect = self.image.get_rect()
-        #     self.rect.bottom = bottom
 # Ai code
                 # Creates Sword class so sword appears on screen and does its job
 class Sword(Sprite):
@@ -299,6 +275,7 @@ class Sword(Sprite):
                 print("mmmm")
                 kaido.spawn_enemies(1)
                 kaido.kill()
+                # Adrian Code;Spawn Kaido B after death
                 kaido.spawn_Kb()
                 self.kill()
         hits_kb = pg.sprite.spritecollide(self, self.game.kb, False)
@@ -328,27 +305,6 @@ class Sword(Sprite):
                 shanks.spawn_enemies(1)
                 shanks.kill()
                 self.kill()
-
-        # Reduce hitpoints of collided enemies and bosses
-        # for enemy in hits_enemies:
-        #     enemy.hitpoints -= 1
-
-        # for boss in hits_boss:
-        #     boss.hitpoints -= 1
-
-        # for kaido in hits_kaido:
-        #     kaido.hitpoints -= 1
-
-        # for buggy in hits_buggy:
-        #     buggy.hitpoints -= 1
-
-        # for bigmom in hits_bigmom:
-        #     bigmom.hitpoints -= 1
-
-        # for shanks in hits_shanks:
-        #     shanks.hitpoints -= 1
-
-
 
 # create a wall class
 # a colladiable object
@@ -383,11 +339,6 @@ def collide_with_obj(self, group, kill, desc):
     if hits and desc == "coin":
         hits[0].kill()
 
-
-# def spawn_boss():
-
-#     if self.moneybag >= 1:
-#         boss = 2
 
 def update(self):
         # self.rect.x = self.x * TILESIZE
@@ -575,7 +526,7 @@ class Kaido(Sprite):
     
     def spawn_Kb(self):
         print("Spawning KB")
-        for _ in range(1): #da number of enemies
+        for _ in range(1): # we only spawn 1 Kb
             print("x")
             col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawn at Random column
             row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
@@ -601,7 +552,7 @@ class Kaido(Sprite):
                 if self.vy < 0:
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  
-
+# Stands for Kaido B; Kaido's second phase
 class Kb(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.kb
@@ -618,7 +569,7 @@ class Kb(Sprite):
         
 # AI Code
     def update(self):
-        # Calculate direction vector to player and make Bigmom follow player's center
+        # Calculate direction vector to player and make KB follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
         # Normalize the direction vector and scale the boss by speed
         if direction.length() > 0:
@@ -633,13 +584,13 @@ class Kb(Sprite):
         self.collide_with_walls('y')
         
         # Ai Code
-        # checks if K2 has been hit by sword
+        # checks if Kb has been hit by sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
             self.hitpoints -= 1  # When sword hits Reduces da hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.kill()  # Kills Kaido if hitpoints = 0
+                self.kill()  # Kills Kaido B if hitpoints = 0
         # Allows Collision with wall
     def collide_with_walls(self, dir):
         if dir == 'x':
@@ -697,11 +648,11 @@ class Bigmom(Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-        
+        # Ai Code: Spawns enemies every 2 seconds
         now = pg.time.get_ticks()
         if now - self.last_spawn_time > 2000:  # 2000 milliseconds = 2 seconds
             self.last_spawn_time = now
-            self.spawn_enemies(1)
+            self.spawn_enemies(3) # number of enemies spawned every 2 seconds
 
         # Checking if Bigmom collides with da sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
@@ -711,6 +662,7 @@ class Bigmom(Sprite):
             if self.hitpoints <= 0:
                 self.spawn_enemies()  # Spawn da enemies if hitpoints are gone
                 self.kill()  # Kill Bigmom if hp = 0
+# Modiefied Ai code
 # spawn enemies randomly
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies): # number o'enemies
@@ -751,7 +703,7 @@ class Buggy(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = BUGGY_SPEED  
         self.hitpoints = 500
-        self.shoot_delay = 1000  # Delay between shots in milliseconds
+        self.shoot_delay = 1000  # Shoot every 1 second
         self.last_shot = pg.time.get_ticks()  # Time of the last shot
         
 # AI Code
@@ -769,9 +721,10 @@ class Buggy(Sprite):
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
+        #Ai code shoots bullets after shoot delay over
         now = pg.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
-            self.last_shot = now
+            self.last_shot = now # shoots when delay over
             self.shoot()
         
         # Check if Buggy collides with the sword
@@ -782,16 +735,16 @@ class Buggy(Sprite):
             if self.hitpoints <= 0:
                 self.spawn_enemies()  # Spawns da enemies if hitpoints are zero
                 self.kill()  # Kills Buggy if hp = 0
-# Ai Code Spawns enemies randomly
+# Ai Code Modified Spawns enemies randomly
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies):
             col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawns at Random column
             row = random.randint(0, len(self.game.map_data) - 1)     # Spawns at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
-    
+    # Ai modified Code; adds bullets
     def shoot(self):
-        bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, self.vx, self.vy)
+        bullet = Bullet(self.game, self.rect.centerx, self.rect.centery, self.vx, self.vy) #launches from center
         self.game.all_sprites.add(bullet)
         self.game.bullets.add(bullet)
 
@@ -824,25 +777,26 @@ class Bullet(Sprite):
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.vx = vx * 5  # Bullet speed is double the buggy's speed
-        self.vy = vy * 5  # Bullet speed is double the buggy's speed
-
+        self.vx = vx * 5  # Bullet speed is multiplied by the buggy speed
+        self.vy = vy * 5  # Bullet speed is multiplies by the buggy speed
+# Ai modified code
+#updates relative to games delta time
     def update(self):
         self.rect.x += self.vx * self.game.dt
         self.rect.y += self.vy * self.game.dt
-
+# allows to hit player and - hitpoints
         hits = pg.sprite.spritecollide(self, self.game.player_group, False)
         for hit in hits:
             hit.hitpoints -= 1
             self.kill()
-        # Kill the bullet if it goes off screen
+        # Kills the bullet if it goes off screen
         if not self.game.screen.get_rect().colliderect(self.rect):
             self.kill()
 
         # Check for collision with walls
         wall_hit = pg.sprite.spritecollideany(self, self.game.walls)
         if wall_hit:
-            self.kill()
+            self.kill() #kills if touches walls
             
 class Shanks(Sprite):
     def __init__(self, game, x, y):
@@ -857,9 +811,9 @@ class Shanks(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = SHANK_SPEED  
         self.hitpoints = 500
-        self.swinging = False
+        self.swinging = False #Katana activated
         self.katana = None
-        self.swing_cooldown = Cooldown()  # Add cooldown instance
+        self.swing_cooldown = Cooldown()  # Add cooldown instance/Swing Cooldown!
 
     def update(self):
         # Calculate direction vector to player and make Shanks follow player's center
@@ -877,9 +831,9 @@ class Shanks(Sprite):
         self.collide_with_walls('y')
 
         # Handle swinging katana with cooldown
-        self.swing_cooldown.ticking()
+        self.swing_cooldown.ticking() #starts timer
         if self.swing_cooldown.countdown(3) <= 0 and not self.swinging:
-            self.swinging = True
+            self.swinging = True #swings/activates katana!
             self.katana = Katana(self.game, self)
             self.game.all_sprites.add(self.katana)
             self.swing_cooldown.event_reset()
@@ -890,7 +844,7 @@ class Shanks(Sprite):
             self.hitpoints -= 1  # Reduce hitpoints
             sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies(3)  # Spawn enemies if Shanks' hitpoints are 0
+                self.spawn_enemies()  # Spawn enemies if Shanks' hitpoints are 0
                 self.kill()  # Kill Shanks if hitpoints are 0
 
     def spawn_enemies(self, num_enemies):
@@ -927,7 +881,7 @@ class Katana(Sprite):
         self.image = pg.Surface((80, 29))
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
-        self.shanks = shanks  # Reference to the Shanks instance
+        self.shanks = shanks  # Relates to Shanks 
         self.duration = 100  # Duration the katana stays active on the screen
         self.timer = 0  
 
@@ -937,7 +891,7 @@ class Katana(Sprite):
             self.kill()
 
         offset = pg.math.Vector2(30, 0)
-        self.rect.center = self.shanks.rect.center + offset
+        self.rect.center = self.shanks.rect.center + offset # gives shanks the katana based on center
 
         hits_player = pg.sprite.spritecollide(self, [self.game.player], False)
         if hits_player:

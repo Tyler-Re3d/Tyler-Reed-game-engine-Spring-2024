@@ -58,9 +58,9 @@ class Game:
         pg.draw.rect(surface, WHITE, outline_rect, 2)
     # the sprites / classes
     def new(self):
-        self.test_timer = Cooldown()
         print("create new game...")
         self.all_sprites = pg.sprite.Group()
+        self.test_timer = Cooldown()
         self.walls = pg.sprite.Group()
         self.coins = pg.sprite.Group()
         self.enemy = pg.sprite.Group()
@@ -75,9 +75,6 @@ class Game:
         self.katana = pg.sprite.Group()
         self.player_group = pg.sprite.Group()
         self.kb = pg.sprite.Group()
-       # self.player = Player(self, 10, 10)
-       # for x in range(10, 20):
-        #    Wall(self, x, 5)
         #Imports da map data
         for row, tiles in enumerate(self.map_data):
             # print(row)
@@ -93,6 +90,7 @@ class Game:
                 if tile == 'C':
                     Coin(self, col, row)
                 if tile == 'E': 
+                    #AiCode; new enemy at a collum/row spawns porportional to game/existing enemies
                     new_enemy = enemy(self, col, row, self.screen.get_width(), self.screen.get_height())
                     new_enemy.spawn(self.screen.get_width(), self.screen.get_height())
                 if tile == 'B':
@@ -191,23 +189,7 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
-            # if event.type == pg.KEYDOWN:
-            #     if event.key == pg.K_LEFT:
-            #         self.player.move(dx = -1)
-            #     if event.key == pg.K_RIGHT:
-            #         self.player.move(dx = 1)
-            #     if event.key == pg.K_UP:
-            #         self.player.move(dy=-1)
-            #     if event.key == pg.K_DOWN:
-            #         self.player.move(dy=1)
-    # def load_data(self):
-    #     game_folder = path.dirname(__file__)
-    #     img_folder = path.join(game_folder, 'images')
-    #     self.player_img = pg.image.load(path.join(img_folder, 'download-compresskaru.com.png')).convert_alpha()
-    #     self.map_data = []
-    #     with open(path.join(game_folder, 'map.txt'), 'rt') as f:
-    #         for line in f:
-    #             self.map_data.append(line)
+         
 # Start
     def show_start_screen(self):
         pass
