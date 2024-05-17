@@ -105,6 +105,7 @@ class Game:
                     Buggy(self, col, row)
                 if tile =='S':
                     Shanks(self, col, row)
+                    
     # Run Method
     def run(self):
         self.playing = True
@@ -116,6 +117,7 @@ class Game:
             self.enemies.update()  
             self.boss.update()
             self.sword.update()
+            self.katana.update()
     # Quit Method (X in corner)
     def quit(self):
         pg.quit()
@@ -136,7 +138,7 @@ class Game:
             self.playing = False
     # Ai code spawns enemies randomly
     def spawn_enemies(self):
-        for _ in range(12):
+        for _ in range(10):
             col = random.randint(0, len(self.map_data[0]) - 1)  # Spawns enemies at a ranndom column
             row = random.randint(0, len(self.map_data) - 1)     # Spawns enemies at a Random row
             if self.map_data[row][col] == '.':

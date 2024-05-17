@@ -179,6 +179,12 @@ class Player(Sprite):
             if self.hit_cooldown.countdown(1):
                 self.hitpoints -= 1  # Reduce player's hitpoints by 1 if hit by boss
                 self.hit_cooldown.event_reset()
+
+        hits_Kb = pg.sprite.spritecollide(self, self.game.kb, False)
+        for Kb in hits_Kb:
+            if self.hit_cooldown.countdown(1):
+                self.hitpoints -= 1
+                self.hit_cooldown.event_reset()
         
         hits_Bigmom = pg.sprite.spritecollide(self, self.game.bigmom, False)
         for Bigmom in hits_Bigmom:
@@ -528,7 +534,7 @@ class Kaido(Sprite):
         self.y = y * TILESIZE
         self.vx, self.vy = 0, 0
         self.speed = KAIDO_SPEED  
-        self.hitpoints = 100
+        self.hitpoints = 500
         
 # AI Code
     def update(self):
@@ -818,8 +824,8 @@ class Bullet(Sprite):
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.vx = vx * 10  # Bullet speed is double the buggy's speed
-        self.vy = vy * 10  # Bullet speed is double the buggy's speed
+        self.vx = vx * 5  # Bullet speed is double the buggy's speed
+        self.vy = vy * 5  # Bullet speed is double the buggy's speed
 
     def update(self):
         self.rect.x += self.vx * self.game.dt
@@ -851,51 +857,49 @@ class Shanks(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = SHANK_SPEED  
         self.hitpoints = 500
-        
-# AI Code
+        self.swinging = False
+        self.katana = None
+        self.swing_cooldown = Cooldown()  # Add cooldown instance
+
     def update(self):
-        # Calculate direction vector to player and make Bigmom follow player's center
+        # Calculate direction vector to player and make Shanks follow player's center
         direction = pg.math.Vector2(self.game.player.rect.center) - pg.math.Vector2(self.rect.center)
-        # Normalize the direction vector and scale the boss by speed
+        # Normalize the direction vector and scale the velocity by speed
         if direction.length() > 0:
             self.vx, self.vy = direction.normalize() * self.speed
 
-        # Multiply velocity by delta time 
+        # Update position with delta time
         self.x += self.vx * self.game.dt
         self.y += self.vy * self.game.dt
         self.rect.x = self.x
         self.collide_with_walls('x')
         self.rect.y = self.y
         self.collide_with_walls('y')
-        
-        # Check if Shanks  collides with the sword
+
+        # Handle swinging katana with cooldown
+        self.swing_cooldown.ticking()
+        if self.swing_cooldown.countdown(3) <= 0 and not self.swinging:
+            self.swinging = True
+            self.katana = Katana(self.game, self)
+            self.game.all_sprites.add(self.katana)
+            self.swing_cooldown.event_reset()
+
+        # Check if Shanks collides with the sword
         sword_hit = pg.sprite.spritecollideany(self, self.game.sword)
         if sword_hit:
-            self.hitpoints -= 1  # if hit Reduce da hitpoints
-            sword_hit.kill()  # Removes the sword
+            self.hitpoints -= 1  # Reduce hitpoints
+            sword_hit.kill()  # Remove the sword
             if self.hitpoints <= 0:
-                self.spawn_enemies()  # Spawn enemies if SHank hp = 0
-                self.kill()  # Kill Shanks if hp = 0
-#Ai code spanws randomly
+                self.spawn_enemies(3)  # Spawn enemies if Shanks' hitpoints are 0
+                self.kill()  # Kill Shanks if hitpoints are 0
+
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies):
-            col = random.randint(0, len(self.game.map_data[0]) - 1)  # spawns enemies at Random column
-            row = random.randint(0, len(self.game.map_data) - 1)     # spawns enemies at Random row
+            col = random.randint(0, len(self.game.map_data[0]) - 1)  # Random column
+            row = random.randint(0, len(self.game.map_data) - 1)  # Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
 
-# multiplies velocity by delta time
-        # self.x += self.vx * self.game.dt
-        # self.y += self.vy * self.game.dt
-        # self.rect.x = self.x
-        # self.collide_with_walls('x')
-        # self.rect.y = self.y
-        # self.collide_with_walls('y')
-        # # dies when hitpoints are gone
-        # if self.hitpoints <= 0:
-        #     self.kill()
-
-        # Allows Collision with wall
     def collide_with_walls(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -914,4 +918,30 @@ class Shanks(Sprite):
                 if self.vy < 0:
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  
-            
+
+class Katana(Sprite):
+    def __init__(self, game, shanks):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((80, 29))
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()
+        self.shanks = shanks  # Reference to the Shanks instance
+        self.duration = 100  # Duration the katana stays active on the screen
+        self.timer = 0  
+
+    def update(self):
+        self.timer += self.game.dt
+        if self.timer >= self.duration:
+            self.kill()
+
+        offset = pg.math.Vector2(30, 0)
+        self.rect.center = self.shanks.rect.center + offset
+
+        hits_player = pg.sprite.spritecollide(self, [self.game.player], False)
+        if hits_player:
+            for player in hits_player:
+                player.hitpoints -= 20
+                if player.hitpoints <= 0:
+                    player.kill()
