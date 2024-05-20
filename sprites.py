@@ -523,7 +523,7 @@ class Kaido(Sprite):
             row = random.randint(0, len(self.game.map_data) - 1)     # Spawn at Random row
             if self.game.map_data[row][col] == '.':
                 enemy(self.game, col, row, self.game.screen.get_width(), self.game.screen.get_height())
-    
+    # (my code) simialr to enemy spawning code, spawns Kb after kaido ded
     def spawn_Kb(self):
         print("Spawning KB")
         for _ in range(1): # we only spawn 1 Kb
@@ -663,7 +663,7 @@ class Bigmom(Sprite):
                 self.spawn_enemies()  # Spawn da enemies if hitpoints are gone
                 self.kill()  # Kill Bigmom if hp = 0
 # Modiefied Ai code
-# spawn enemies randomly
+# spawn enemies randomly if she ded
     def spawn_enemies(self, num_enemies):
         for _ in range(num_enemies): # number o'enemies
             col = random.randint(0, len(self.game.map_data[0]) - 1)  # Spawns at Random column
@@ -811,7 +811,7 @@ class Shanks(Sprite):
         self.vx, self.vy = 0, 0
         self.speed = SHANK_SPEED  
         self.hitpoints = 500
-        self.swinging = False #Katana activated
+        self.swinging = False #Katana activated!
         self.katana = None
         self.swing_cooldown = Cooldown()  # Add cooldown instance/Swing Cooldown!
 
@@ -830,7 +830,7 @@ class Shanks(Sprite):
         self.rect.y = self.y
         self.collide_with_walls('y')
 
-        # Handle swinging katana with cooldown
+        # Handles swinging katana with cooldown
         self.swing_cooldown.ticking() #starts timer
         if self.swing_cooldown.countdown(3) <= 0 and not self.swinging:
             self.swinging = True #swings/activates katana!
@@ -872,13 +872,13 @@ class Shanks(Sprite):
                 if self.vy < 0:
                     self.rect.top = wall.rect.bottom
                 self.vy *= -1  
-
+# Ai modified code
 class Katana(Sprite):
     def __init__(self, game, shanks):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((80, 29))
+        self.image = pg.Surface((80, 29)) #size o katana
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
         self.shanks = shanks  # Relates to Shanks 
